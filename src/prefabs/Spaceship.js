@@ -34,11 +34,20 @@ class Spaceship extends Phaser.GameObjects.Sprite {
     reset() {
         if(Phaser.Math.Between(0,1) == 0) {
             this.x = 0;
-            this.moveSpeed = Math.abs(game.settings.spaceshipSpeed);
+            this.moveSpeed = Math.abs(this.moveSpeed);
+            this.angle = 180;
+            this.setOrigin(1,1);
         } else {
             this.x = game.config.width;
-            this.moveSpeed = -(Math.abs(game.settings.spaceshipSpeed));
+            this.moveSpeed = -(Math.abs(this.moveSpeed));
+            this.angle = 0;
+            this.setOrigin(0,0);
         }
         this.y = this.startingY;
+    }
+
+    // doubles speed
+    increaseSpeed() {
+        this.moveSpeed *= 2;
     }
 }

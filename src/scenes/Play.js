@@ -59,7 +59,7 @@ class Play extends Phaser.Scene {
         // initialize scroe
         this.p1Score = 0;
 
-        let scoreConfig = {
+        this.scoreConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
             backgroundColor: '#F3B141',
@@ -71,25 +71,34 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
-        this.scoreleft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, scoreConfig);
-        this.timeText = this.add.text(game.config.width - borderUISize - borderPadding - scoreConfig.fixedWidth, borderUISize + borderPadding * 2, this.time.now, scoreConfig);
+        this.scoreleft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, this.scoreConfig);
+        this.timeText = this.add.text(game.config.width - borderUISize - borderPadding - this.scoreConfig.fixedWidth, borderUISize + borderPadding * 2, this.time.now, this.scoreConfig);
 
         // GAME OVER flag
         this.gameOver = false;
 
-        // 60-second play clock
-        scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + game.config.width/10, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
-            this.gameOver = true;
-        }, null, this);
-
         this.startTime = Math.round(this.time.now * 0.001);
         this.totalTime = Math.round(game.settings.gameTimer * 0.001);
+
+        this.clock = this.time.delayedCall(game.settings.gameTimer/2, () => {
+            this.ship01.increaseSpeed();
+            this.ship02.increaseSpeed();
+            this.ship03.increaseSpeed();
+        }, null, this);
+
+        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
+            this.ship01.increaseSpeed();
+            this.ship02.increaseSpeed();
+            this.ship03.increaseSpeed();
+        }, null, this);
     }
 
     update() {
+        if(this.totalTime - (Math.round(this.time.now * 0.001) - this.startTime) <= 0) {
+            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', this.scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + game.config.width/10, 'Press (R) to Restart or ← for Menu', this.scoreConfig).setOrigin(0.5);
+            this.gameOver = true;
+        }
         if(!this.gameOver) {
             // update starfield
             this.starfield.tilePositionX -= starSpeed;
@@ -116,6 +125,7 @@ class Play extends Phaser.Scene {
                 this.shipExplode(this.ship03);
             }
 
+            // display current time
             this.timeText.text = this.totalTime - (Math.round(this.time.now * 0.001) - this.startTime);
         }
 
@@ -123,6 +133,7 @@ class Play extends Phaser.Scene {
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart();
         }
+
         // check for menu
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLeft)) {
             this.scene.start("menuScene");
@@ -169,5 +180,11 @@ class Play extends Phaser.Scene {
 
         // sound effect one time
         this.sound.play('sfx_explosion');
+
+        this.totalTime += ship.points/10;
+    }
+
+    boostShips() {
+
     }
 }

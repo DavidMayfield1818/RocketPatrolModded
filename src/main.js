@@ -6,12 +6,12 @@
 // ----------------------------------------------------------------------------
 // point break down
 // New Weapon (20)
-// Additional time per hit (20)
+// Additional time per hit (20) -done based on points/10
 // Simultaneous two player mode (30)
-// Time remaining display (10)
-// control post launch (5)
-// randomized enemy ship movement (5)
-// increased speed post 30 (5)
+// Time remaining display (10) -Done
+// control post launch (5) -Hoping for more than 5 but done
+// randomized enemy ship movement (5) -come out of both sides and move up and down
+// increased speed post 30 (5) -done at 50% and 100% game time
 // ... + more idk need (5) currently
 
 console.log("Rocket Patrol Modded");
