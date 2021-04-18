@@ -72,17 +72,21 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreleft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, scoreConfig);
+        this.timeText = this.add.text(game.config.width - borderUISize - borderPadding - scoreConfig.fixedWidth, borderUISize + borderPadding * 2, this.time.now, scoreConfig);
 
         // GAME OVER flag
         this.gameOver = false;
 
         // 60-second play clock
         scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall(60000, () => {
+        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + game.config.width/10, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
+
+        this.startTime = Math.round(this.time.now * 0.001);
+        this.totalTime = Math.round(game.settings.gameTimer * 0.001);
     }
 
     update() {
@@ -111,6 +115,8 @@ class Play extends Phaser.Scene {
                 this.p1Rocket.reset();
                 this.shipExplode(this.ship03);
             }
+
+            this.timeText.text = this.totalTime - (Math.round(this.time.now * 0.001) - this.startTime);
         }
 
         // check for restart
