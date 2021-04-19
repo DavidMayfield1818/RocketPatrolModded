@@ -75,14 +75,14 @@ class Menu extends Phaser.Scene {
             // 2 player
             this.pC = 2;
             this.sound.play('sfx_select');
-            this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), this.pC + ' player(s)', this.menu2Config).setOrigin(0.5);
+            this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (4 * (borderUISize + borderPadding)), this.pC + ' player(s)', this.menu2Config).setOrigin(0.5);
         }
         if(Phaser.Input.Keyboard.JustDown(keyDown)) {
             // 1 player
             this.pC = 1;
             
             this.sound.play('sfx_select');
-            this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), this.pC + ' player(s)', this.menu2Config).setOrigin(0.5);
+            this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (4 * (borderUISize + borderPadding)), this.pC + ' player(s)', this.menu2Config).setOrigin(0.5);
         }
     }
 }
