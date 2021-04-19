@@ -25,6 +25,8 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0
         }
 
+        this.pC = 1;
+
         // config for third line of text plus learned how to copy shallow objects
         this.menu2Config = Object.assign({},menuConfig);
         this.menu2Config.backgroundColor = '#00FF00';
@@ -33,10 +35,11 @@ class Menu extends Phaser.Scene {
 
         // show menu text
         this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
-        this.add.text(game.config.width/2, game.config.height/2, 'Use ←→ arrows to move & (F) to fire', menuConfig).setOrigin(0.5);
-        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press ← for Novice or → for Expert', this.menu2Config).setOrigin(0.5);
-        this.add.text(game.config.width/2, game.config.height/2 + (2 * (borderUISize + borderPadding)), 'Press ↑ for 2 player or ↓ for 1 player', this.menu2Config).setOrigin(0.5);
-        this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), 1 + ' player(s)', this.menu2Config).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2, 'P1 Use ←→ to move & ↑ to fire', menuConfig).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'P2 Use (A)/(D) to move & (W) to fire', menuConfig).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2 + (2 * (borderUISize + borderPadding)), 'Press ← for Novice or → for Expert', this.menu2Config).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), 'Press ↑ for 2 player or ↓ for 1 player', this.menu2Config).setOrigin(0.5);
+        this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (4 * (borderUISize + borderPadding)), this.pC + ' player(s)', this.menu2Config).setOrigin(0.5);
 
         // define keys
         keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -50,7 +53,9 @@ class Menu extends Phaser.Scene {
             // easy mode
             game.settings = {
                 spaceshipSpeed: 3,
-                gameTimer: 60000
+                gameTimer: 60000,
+                playerCount: this.pC,
+                highScore: 0
             }
             this.sound.play('sfx_select');
             this.scene.start('playScene');  
@@ -59,26 +64,25 @@ class Menu extends Phaser.Scene {
             // hard mode
             game.settings = {
                 spaceshipSpeed: 4,
-                gameTimer: 45000
+                gameTimer: 45000,
+                playerCount: this.pC,
+                highScore: 0
             }
             this.sound.play('sfx_select');
             this.scene.start('playScene'); 
         }
         if(Phaser.Input.Keyboard.JustDown(keyUp)) {
-            // 1 player
-            game.settings = {
-                playerCount: 2
-            }
+            // 2 player
+            this.pC = 2;
             this.sound.play('sfx_select');
-            this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), game.settings.playerCount + ' player(s)', this.menu2Config).setOrigin(0.5);
+            this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), this.pC + ' player(s)', this.menu2Config).setOrigin(0.5);
         }
         if(Phaser.Input.Keyboard.JustDown(keyDown)) {
-            // 2 player
-            game.settings = {
-                playerCount: 1
-            }
+            // 1 player
+            this.pC = 1;
+            
             this.sound.play('sfx_select');
-            this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), game.settings.playerCount + ' player(s)', this.menu2Config).setOrigin(0.5);
+            this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), this.pC + ' player(s)', this.menu2Config).setOrigin(0.5);
         }
     }
 }

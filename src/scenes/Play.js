@@ -35,6 +35,17 @@ class Play extends Phaser.Scene {
 
         // add rocket (player 1)
         this.p1Rocket = new Rocket(this, game.config.width/2, game.config.height - borderUISize - borderPadding, 'rocket').setOrigin(0.5,0);
+        this.p2Rocket = new RocketP2(this, game.config.width/2, game.config.height - borderUISize - borderPadding, 'rocket').setOrigin(0.5,0);
+
+        this.multiplayerMultiplier = 0.5;
+
+        if(game.settings.playerCount == 1) {
+            this.p2Rocket.valid = false;
+            this.p2Rocket.x = -100;
+            this.p2Rocket.y = -100;
+            console.log('p2 removed');
+            this.multiplayerMultiplier = 1;
+        }
 
         // add spaceship (x3)
         this.ship01 = new Spaceship(this, game.config.width + borderUISize * 6, borderUISize * 4, 'spaceship', 0, 30).setOrigin(0,0);
@@ -46,6 +57,10 @@ class Play extends Phaser.Scene {
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
 
         // animation config
         this.anims.create({
@@ -75,6 +90,7 @@ class Play extends Phaser.Scene {
         }
         this.scoreleft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding * 2, this.p1Score, this.scoreConfig);
         this.timeText = this.add.text(game.config.width - borderUISize - borderPadding - this.scoreConfig.fixedWidth, borderUISize + borderPadding * 2, this.time.now, this.scoreConfig);
+        this.highScoreText = this.add.text(game.config.width/2, borderUISize + borderPadding * 2, this.p1Score, this.scoreConfig).setOrigin(0.5,0);
 
         // GAME OVER flag
         this.gameOver = false;
@@ -114,6 +130,7 @@ class Play extends Phaser.Scene {
 
             // update rocket
             this.p1Rocket.update();
+            this.p2Rocket.update();
 
             // update spaceship (x3)
             this.ship01.update();
@@ -124,11 +141,18 @@ class Play extends Phaser.Scene {
             this.checkCollisionWithShip(this.p1Rocket);
             this.checkCollisionWithShip(this.p1Rocket.missile01);
             this.checkCollisionWithShip(this.p1Rocket.missile02);
-            
+            this.checkCollisionWithShip(this.p2Rocket);
+            this.checkCollisionWithShip(this.p2Rocket.missile01);
+            this.checkCollisionWithShip(this.p2Rocket.missile02);
+
 
             // display current time
             this.timeText.text = Math.floor(this.totalTime - (Math.round(this.time.now * 0.001) - this.startTime));
         }
+        if(this.p1Score > game.settings.highScore) {
+            game.settings.highScore = this.p1Score;
+        }
+        this.highScoreText.text = (game.settings.highScore);
 
         // check for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
@@ -197,7 +221,7 @@ class Play extends Phaser.Scene {
 
 
         // score add and repaint
-        this.p1Score += ship.points;
+        this.p1Score += ship.points * this.multiplayerMultiplier;
         this.scoreleft.text = this.p1Score;
 
         var timeAddition = ship.points / 20;
