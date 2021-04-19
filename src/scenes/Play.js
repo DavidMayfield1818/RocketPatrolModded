@@ -9,6 +9,7 @@ class Play extends Phaser.Scene {
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('starfield', './assets/starfield.png');
         this.load.image('missile', './assets/missile.png');
+        this.load.image('particle_boom', './assets/particle_boom.png');
 
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {
@@ -83,19 +84,21 @@ class Play extends Phaser.Scene {
         this.startTime = Math.round(this.time.now * 0.001);
         this.totalTime = Math.round(game.settings.gameTimer * 0.001);
 
-        this.clock = this.time.delayedCall(game.settings.gameTimer/2, () => {
+        this.clock01 = this.time.delayedCall(game.settings.gameTimer/2, () => {
             this.ship01.increaseSpeed();
             this.ship02.increaseSpeed();
             this.ship03.increaseSpeed();
             this.halftime = true;
         }, null, this);
 
-        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
+        this.clock02 = this.time.delayedCall(game.settings.gameTimer, () => {
             this.ship01.increaseSpeed();
             this.ship02.increaseSpeed();
             this.ship03.increaseSpeed();
             this.overtime = true;
         }, null, this);
+
+        this.particleBoom = this.add.particles('particle_boom');
     }
 
     update() {
@@ -176,11 +179,14 @@ class Play extends Phaser.Scene {
         // play explode
         boom.anims.play('explode');
 
+        // reset ship pos
+        ship.reset();
+
+        // sound effect one time
+        this.sound.play('sfx_explosion');
+
         // callback after anim completes
         boom.on('animationcomplete', () => {
-            // reset ship pos
-            ship.reset();
-
             // make visable again
             ship.alpha = 1;
 
@@ -188,12 +194,11 @@ class Play extends Phaser.Scene {
             boom.destroy();
         });
 
+
+
         // score add and repaint
         this.p1Score += ship.points;
         this.scoreleft.text = this.p1Score;
-
-        // sound effect one time
-        this.sound.play('sfx_explosion');
 
         var timeAddition = ship.points / 20;
         if(this.halftime) {timeAddition *= 0.5}

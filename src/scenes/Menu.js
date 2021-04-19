@@ -26,18 +26,23 @@ class Menu extends Phaser.Scene {
         }
 
         // config for third line of text plus learned how to copy shallow objects
-        let menu2Config = Object.assign({},menuConfig);
-        menu2Config.backgroundColor = '#00FF00';
-        menu2Config.color = '#000000';
+        this.menu2Config = Object.assign({},menuConfig);
+        this.menu2Config.backgroundColor = '#00FF00';
+        this.menu2Config.color = '#000000';
+        this.menu2Config.fontSize = '20px';
 
         // show menu text
         this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width/2, game.config.height/2, 'Use ←→ arrows to move & (F) to fire', menuConfig).setOrigin(0.5);
-        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press ← for Novice or → for Expert', menu2Config).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press ← for Novice or → for Expert', this.menu2Config).setOrigin(0.5);
+        this.add.text(game.config.width/2, game.config.height/2 + (2 * (borderUISize + borderPadding)), 'Press ↑ for 2 player or ↓ for 1 player', this.menu2Config).setOrigin(0.5);
+        this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), 1 + ' player(s)', this.menu2Config).setOrigin(0.5);
 
         // define keys
         keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        keyDown = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
     }
 
     update() {
@@ -58,6 +63,22 @@ class Menu extends Phaser.Scene {
             }
             this.sound.play('sfx_select');
             this.scene.start('playScene'); 
+        }
+        if(Phaser.Input.Keyboard.JustDown(keyUp)) {
+            // 1 player
+            game.settings = {
+                playerCount: 2
+            }
+            this.sound.play('sfx_select');
+            this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), game.settings.playerCount + ' player(s)', this.menu2Config).setOrigin(0.5);
+        }
+        if(Phaser.Input.Keyboard.JustDown(keyDown)) {
+            // 2 player
+            game.settings = {
+                playerCount: 1
+            }
+            this.sound.play('sfx_select');
+            this.playerDisplay = this.add.text(game.config.width/2, game.config.height/2 + (3 * (borderUISize + borderPadding)), game.settings.playerCount + ' player(s)', this.menu2Config).setOrigin(0.5);
         }
     }
 }

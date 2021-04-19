@@ -5,8 +5,8 @@
 // duration:
 // ----------------------------------------------------------------------------
 // point break down
-// New Weapon (20) - almost done need to add new ART!!!!!!!!!
-// Additional time per hit (20) -done based on points/10
+// New Weapon (20) - done
+// Additional time per hit (20) -done based on points and time
 // Simultaneous two player mode (30)
 // Time remaining display (10) -Done
 // control post launch (5) -Hoping for more than 5 but done
@@ -32,4 +32,4 @@ let borderPadding = borderUISize / 3;
 let starSpeed = config.width/160;
 
 // reserve keyboard bindings
-let keyF, keyR, keyLeft, keyRight;
+let keyF, keyR, keyLeft, keyRight, keyUp, keyDown;
