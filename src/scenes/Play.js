@@ -8,6 +8,7 @@ class Play extends Phaser.Scene {
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('starfield', './assets/starfield.png');
+        //this.load.image('missile', './assets/missile.png');
 
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {
@@ -76,6 +77,8 @@ class Play extends Phaser.Scene {
 
         // GAME OVER flag
         this.gameOver = false;
+        this.halftime = false;
+        this.overtime = false;
 
         this.startTime = Math.round(this.time.now * 0.001);
         this.totalTime = Math.round(game.settings.gameTimer * 0.001);
@@ -84,17 +87,20 @@ class Play extends Phaser.Scene {
             this.ship01.increaseSpeed();
             this.ship02.increaseSpeed();
             this.ship03.increaseSpeed();
+            this.halftime = true;
         }, null, this);
 
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.ship01.increaseSpeed();
             this.ship02.increaseSpeed();
             this.ship03.increaseSpeed();
+            this.overtime = true;
         }, null, this);
     }
 
     update() {
         if(this.totalTime - (Math.round(this.time.now * 0.001) - this.startTime) <= 0) {
+            this.scoreConfig.fixedWidth = 0; 
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', this.scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + game.config.width/10, 'Press (R) to Restart or ← for Menu', this.scoreConfig).setOrigin(0.5);
             this.gameOver = true;
@@ -112,21 +118,13 @@ class Play extends Phaser.Scene {
             this.ship03.update();
 
             // check for collisions
-            if(this.checkCollision(this.p1Rocket,this.ship01)){
-                this.p1Rocket.reset();
-                this.shipExplode(this.ship01);
-            }
-            if(this.checkCollision(this.p1Rocket,this.ship02)){
-                this.p1Rocket.reset();
-                this.shipExplode(this.ship02);
-            }
-            if(this.checkCollision(this.p1Rocket,this.ship03)){
-                this.p1Rocket.reset();
-                this.shipExplode(this.ship03);
-            }
+            this.checkCollisionWithShip(this.p1Rocket);
+            this.checkCollisionWithShip(this.p1Rocket.missile01);
+            this.checkCollisionWithShip(this.p1Rocket.missile02);
+            
 
             // display current time
-            this.timeText.text = this.totalTime - (Math.round(this.time.now * 0.001) - this.startTime);
+            this.timeText.text = Math.floor(this.totalTime - (Math.round(this.time.now * 0.001) - this.startTime));
         }
 
         // check for restart
@@ -140,13 +138,29 @@ class Play extends Phaser.Scene {
         }
     }
 
+    checkCollisionWithShip(object) {
+        // check for collisions
+        if(this.checkCollision(object,this.ship01)){
+            object.reset();
+            this.shipExplode(this.ship01);
+        }
+        if(this.checkCollision(object,this.ship02)){
+            object.reset();
+            this.shipExplode(this.ship02);
+        }
+        if(this.checkCollision(object,this.ship03)){
+            object.reset();
+            this.shipExplode(this.ship03);
+        }
+    }
+
     checkCollision(rocket, ship) {
         // simple AABB checking
         if( rocket.x < ship.x + ship.width &&
             rocket.x + rocket.width > ship.x &&
             rocket.y < ship.y + ship.height &&
             rocket.height + rocket.y > ship.y) {
-                return true;
+            return true;
         } else {
             return false;
         }
@@ -181,10 +195,9 @@ class Play extends Phaser.Scene {
         // sound effect one time
         this.sound.play('sfx_explosion');
 
-        this.totalTime += ship.points/10;
-    }
-
-    boostShips() {
-
+        var timeAddition = ship.points / 20;
+        if(this.halftime) {timeAddition *= 0.5}
+        if(this.overtime) {timeAddition *= 0}
+        this.totalTime += timeAddition;
     }
 }

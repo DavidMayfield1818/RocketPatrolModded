@@ -5,7 +5,7 @@
 // duration:
 // ----------------------------------------------------------------------------
 // point break down
-// New Weapon (20)
+// New Weapon (20) - almost done need to add new ART!!!!!!!!!
 // Additional time per hit (20) -done based on points/10
 // Simultaneous two player mode (30)
 // Time remaining display (10) -Done
