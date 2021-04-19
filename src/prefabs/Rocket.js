@@ -13,8 +13,8 @@ class Rocket extends Phaser.GameObjects.Sprite {
         // add rocket sfx
         this.sfxRocket = scene.sound.add('sfx_rocket');
 
-        this.missile01 = new Missile(this.scene, -100, -100, this.texture, 0);
-        this.missile02 = new Missile(this.scene, -100, -100, this.texture, 0);
+        this.missile01 = new Missile(this.scene, -100, -100, 'missile', 0);
+        this.missile02 = new Missile(this.scene, -100, -100, 'missile', 0);
     }
 
     update() {
@@ -58,7 +58,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
             vec.setToPolar(this.rotation, this.fireSpeed);
             this.x += vec.x;
             this.y += vec.y;
-            this.fireSpeed += 0.1;
+            this.fireSpeed += 0.05;
         }
         
         

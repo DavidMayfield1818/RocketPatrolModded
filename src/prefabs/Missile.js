@@ -15,7 +15,7 @@ class Missile extends Phaser.GameObjects.Sprite {
             vec.setToPolar(this.rotation, this.moveSpeed);
             this.x += vec.x;
             this.y += vec.y;
-            this.moveSpeed *= 1.01;
+            this.moveSpeed += 0.1;
 
             // not exist on miss
             if(this.y <= (borderUISize * 3) + borderPadding) {
